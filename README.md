@@ -4,25 +4,23 @@ A production-quality multi-agent system built with [LangGraph](https://github.co
 
 ## Architecture
 
-```
-                        +──────────────+
-                   ┌───>│  Researcher  │───┐
-                   │    │  (web search │   │
-                   │    │   + summarize)│   │
-                   │    +──────────────+   │
-                   │                       │
-┌──────────┐       │    +──────────────+   │
-│          │───────┼───>│    Writer    │───┼───> ┌──────────┐
-│Supervisor│       │    │  (draft /    │   │     │Supervisor│──> END
-│          │<──────┼────│   revise)    │<──┼──── │ (route)  │
-└──────────┘       │    +──────────────+   │     └──────────┘
-      │            │                       │
-      │            │    +──────────────+   │
-      │            └───>│  Reviewer    │───┘
-      │                 │  (critique + │
-      │                 │   verdict)   │
-      ▼                 +──────────────+
-   FINISH
+```mermaid
+flowchart LR
+    SUP((Supervisor))
+
+    subgraph Agents
+        RES["Researcher\n(web search + summarize)"]
+        WRI["Writer\n(draft / revise)"]
+        REV["Reviewer\n(critique + verdict)"]
+    end
+
+    SUP -->|route| RES
+    SUP -->|route| WRI
+    SUP -->|route| REV
+    RES -->|notes| SUP
+    WRI -->|draft| SUP
+    REV -->|verdict| SUP
+    SUP -->|complete| FIN([FINISH])
 ```
 
 ### Agent Roles
